@@ -1,0 +1,2 @@
+Flask==2.3.2
+azure-monitor-opentelemetry==1.6.0

@@ -1,0 +1,17 @@
+httpRetryPolicy:
+  matches:
+    errors:
+    - 5xx
+  maxRetries: 10
+  retryBackOff:
+    initialDelayInMilliseconds: 2
+    maxIntervalInMilliseconds: 2
+tcpRetryPolicy:
+  maxConnectAttempts: 3
+timeoutPolicy:
+  connectionTimeoutInSeconds: 5
+  responseTimeoutInSeconds: 60
+circuitBreakerPolicy:
+  consecutiveErrors: 10
+  intervalInSeconds: 10
+  maxEjectionPercent: 100
