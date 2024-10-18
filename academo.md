@@ -31,9 +31,9 @@ We are going to create a new demo from scratch. Purpose of this demo is to under
 
 ## Create ACA environment
 
-![alt text](image-7.png)
+![alt text](images/image-7.png)
 
-![alt text](image-11.png)
+![alt text](images/image-11.png)
 
 ```
 az containerapp env create --name academoenvw2con -g academorg --location westus2  --internal-only false --enable-peer-to-peer-encryption
@@ -44,7 +44,7 @@ az containerapp env create --name academoenvw2con -g academorg --location westus
 
 ## Build a container image and push it to ACR
 
-![alt text](image-8.png) 
+![alt text](images/image-8.png) 
 
 cd to acabookstoreapi folder and run the following commands.  
 ```
@@ -60,7 +60,7 @@ Please review the python code in the folder. It is a simple python app that retu
 
 
 Note: acaacrpulluami UAMI has been already created and assigned Acrpull role to the Azure container registry srinmantest.
-![alt text](image-9.png)
+![alt text](images/image-9.png)
 
 
 Change rg and name as needed  
@@ -71,7 +71,7 @@ uami_id=$(az identity show --resource-group academorg --name acaacrpulluami --qu
 
 Create a containerapp in the environment.  
 
-![alt text](image-12.png)
+![alt text](images/image-12.png)
 ```
 az containerapp create --name acabookstoreapi --resource-group academorg --environment academoenvw2con --workload-profile-name "Consumption" --image srinmantest.azurecr.io/bookstoreapi:v1 --target-port 5000 --ingress external --revisions-mode multiple --revision-suffix v1 --query properties.configuration.ingress.fqdn --registry-identity $uami_id --registry-server srinmantest.azurecr.io --min-replicas 1 --max-replicas 3 
 ```
@@ -161,7 +161,7 @@ az containerapp ingress access-restriction set --name acabookstoreapi --resource
 ##  Understand Ingress concepts in ACA
 
 
-![alt text](image-10.png)
+![alt text](images/image-10.png)
 
 ```
 az containerapp ingress show --name acabookstoreapi --resource-group academorg
@@ -173,7 +173,7 @@ academo/acacanarydeployment.md
 
 ## Resiliency features  
 
-![alt text](image-6.png)
+![alt text](images/image-6.png)
 
 ```
 az containerapp create --name acabookstoreflaky --resource-group academorg --environment academoenvw2con --workload-profile-name "Consumption" --image srinmantest.azurecr.io/bookstoreapi:flaky --target-port 5000 --ingress external --revisions-mode multiple --revision-suffix v1 --query properties.configuration.ingress.fqdn --registry-identity $uami_id --registry-server srinmantest.azurecr.io --min-replicas 1 --max-replicas 1
@@ -225,7 +225,7 @@ Sample test results:
 First run: No policy  
 Second run: Default policy with recommended settings  
 Third run: Custom policy with tweaked settings  
-![alt text](image-17.png)
+![alt text](images/image-17.png)
 
 Delete the resiliency policy.  
 ```
@@ -234,7 +234,7 @@ az containerapp resiliency delete --resource-group academorg --name defaultpolic
 
 ## Dynamic Sessions 
 
-![alt text](image-18.png)
+![alt text](images/image-18.png)
 ```
 az containerapp sessionpool create --name my-session-pool --resource-group academorg --location westus2 --container-type PythonLTS --max-sessions 100 --cooldown-period 300 --network-status EgressDisabled
 

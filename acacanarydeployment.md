@@ -30,7 +30,7 @@ Azure Container Apps provides a powerful mechanism for managing application chan
 2. **Deploy New Version**
 
    Deploy the new version of your web application. This will create a new revision.
-![alt text](image-13.png)
+![alt text](images/image-13.png)
    ```bash
    az containerapp update --name acabookstoreapi --resource-group academorg --image srinmantest.azurecr.io/bookstoreapi:v2 --min-replicas 1 --max-replicas 3 --revision-suffix v2 
    az containerapp revision label add --label canary --name acabookstoreapi --resource-group academorg --revision acabookstoreapi--v2
@@ -88,7 +88,7 @@ Azure Container Apps provides a powerful mechanism for managing application chan
 8. **Deactive old revision**
 
    Old revision is not needed anymore. Deactivate it. Active revisions cost money.
-![alt text](image-14.png)
+![alt text](images/image-14.png)
    ```bash
    az containerapp revision deactivate --name acabookstoreapi --resource-group academorg --revision acabookstoreapi--v1
    ```
