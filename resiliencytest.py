@@ -5,7 +5,7 @@ from flask import Flask, send_file
 import threading
 
 # Configuration
-ENDPOINT = "https://acabookstoreflaky.delightfulglacier-a4a005da.westus2.azurecontainerapps.io/unstable-endpoint"
+ENDPOINT = "https://aca1bookstoreflaky.yellowwater-6d602683.westus2.azurecontainerapps.io/unstable-endpoint"
 # ENDPOINT = "https://acabookstoreflaky2.salmonglacier-101b4341.westus2.azurecontainerapps.io/unstable-endpoint"
 
 NUM_REQUESTS = 100

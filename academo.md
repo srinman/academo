@@ -36,7 +36,7 @@ We are going to create a new demo from scratch. Purpose of this demo is to under
 ![alt text](images/image-11.png)
 
 ```
-az containerapp env create --name academoenvw2con -g academorg --location westus2  --internal-only false --enable-peer-to-peer-encryption
+az containerapp env create --name acaenv1 -g academorg --location westus2  --internal-only false --enable-peer-to-peer-encryption
    
 ```
 
@@ -73,7 +73,7 @@ Create a containerapp in the environment.
 
 ![alt text](images/image-12.png)
 ```
-az containerapp create --name acabookstoreapi --resource-group academorg --environment academoenvw2con --workload-profile-name "Consumption" --image srinmantest.azurecr.io/bookstoreapi:v1 --target-port 5000 --ingress external --revisions-mode multiple --revision-suffix v1 --query properties.configuration.ingress.fqdn --registry-identity $uami_id --registry-server srinmantest.azurecr.io --min-replicas 1 --max-replicas 3 
+az containerapp create --name aca1bookstoreapi --resource-group academorg --environment acaenv1 --workload-profile-name "Consumption" --image srinmantest.azurecr.io/bookstoreapi:v1 --target-port 5000 --ingress external --revisions-mode multiple --revision-suffix v1 --query properties.configuration.ingress.fqdn --registry-identity $uami_id --registry-server srinmantest.azurecr.io --min-replicas 1 --max-replicas 3 
 ```
 
 **ACA's distinct feature : Container Apps is a resource in Azure Resource Manager (ARM) that provides a simplified way to deploy and manage containerized applications. You don't need to use Kubernetes API objects like Pods, Deployments, or Services. Instead, you use the Azure CLI or Azure portal to create and manage Container Apps.**
@@ -128,12 +128,12 @@ az containerapp create --name acabookstoreapi --resource-group academorg --envir
 
 If you need to change the # of replicas:  
 ```  
-az containerapp update --name acabookstoreapi --resource-group academorg --min-replicas 1 --max-replicas 3  
+az containerapp update --name aca1bookstoreapi --resource-group academorg --min-replicas 1 --max-replicas 3  
 ```
 Deploy another app for serverless demo. 
 
 ```
-az containerapp create --name acabookstoreapimin0 --resource-group academorg --environment academoenvw2con --workload-profile-name "Consumption" --image srinmantest.azurecr.io/bookstoreapi:v1 --target-port 5000 --ingress external --revisions-mode multiple --revision-suffix v1 --query properties.configuration.ingress.fqdn --registry-identity $uami_id --registry-server srinmantest.azurecr.io --min-replicas 0 --max-replicas 3 
+az containerapp create --name aca1bookstoreapimin0 --resource-group academorg --environment acaenv1 --workload-profile-name "Consumption" --image srinmantest.azurecr.io/bookstoreapi:v1 --target-port 5000 --ingress external --revisions-mode multiple --revision-suffix v1 --query properties.configuration.ingress.fqdn --registry-identity $uami_id --registry-server srinmantest.azurecr.io --min-replicas 0 --max-replicas 3 
 ```
 
 
@@ -152,7 +152,7 @@ for added protection, you can use the following command to restrict access to th
 
 ```
 curl ifconfig.me   
-az containerapp ingress access-restriction set --name acabookstoreapi --resource-group academorg --rule-name allowSpecificIP --ip-address 135.134.199.24 --action Allow
+az containerapp ingress access-restriction set --name aca1bookstoreapi --resource-group academorg --rule-name allowSpecificIP --ip-address 135.134.199.24 --action Allow
 ```
 
 **ACA's distinct feature : ACA provides built-in IP address restriction capabilities to control access to containerized applications. This feature allows you to restrict access to specific IP addresses or ranges, providing an additional layer of security for your applications. In AKS or K8S, you would need to configure network policies or NSG to achieve similar functionality.**
@@ -164,7 +164,7 @@ az containerapp ingress access-restriction set --name acabookstoreapi --resource
 ![alt text](images/image-10.png)
 
 ```
-az containerapp ingress show --name acabookstoreapi --resource-group academorg
+az containerapp ingress show --name aca1bookstoreapi --resource-group academorg
 ```
 
 ## Understand Revisions and Traffic splitting in ACA
@@ -176,7 +176,7 @@ academo/acacanarydeployment.md
 ![alt text](images/image-6.png)
 
 ```
-az containerapp create --name acabookstoreflaky --resource-group academorg --environment academoenvw2con --workload-profile-name "Consumption" --image srinmantest.azurecr.io/bookstoreapi:flaky --target-port 5000 --ingress external --revisions-mode multiple --revision-suffix v1 --query properties.configuration.ingress.fqdn --registry-identity $uami_id --registry-server srinmantest.azurecr.io --min-replicas 1 --max-replicas 1
+az containerapp create --name aca1bookstoreflaky --resource-group academorg --environment acaenv1 --workload-profile-name "Consumption" --image srinmantest.azurecr.io/bookstoreapi:flaky --target-port 5000 --ingress external --revisions-mode multiple --revision-suffix v1 --query properties.configuration.ingress.fqdn --registry-identity $uami_id --registry-server srinmantest.azurecr.io --min-replicas 1 --max-replicas 1
 ```
 
 Turn 'Developer tools' on.    
@@ -212,7 +212,7 @@ Let's tweak the resiliency policy.
 Review resiliencypolicy.yaml file.
 
 ```
-az containerapp resiliency update --resource-group academorg --name defaultpolicy --container-app-name acabookstoreflaky --yaml resiliencypolicy.yaml
+az containerapp resiliency update --resource-group academorg --name defaultpolicy --container-app-name aca1bookstoreflaky --yaml resiliencypolicy.yaml
 ```
 
 Run the python script again to see the retries in action.  
@@ -229,7 +229,7 @@ Third run: Custom policy with tweaked settings
 
 Delete the resiliency policy.  
 ```
-az containerapp resiliency delete --resource-group academorg --name defaultpolicy --container-app-name acabookstoreflaky
+az containerapp resiliency delete --resource-group academorg --name defaultpolicy --container-app-name aca1bookstoreflaky
 ```
 
 ## Dynamic Sessions 
@@ -243,7 +243,7 @@ az containerapp sessionpool show --name my-session-pool --resource-group academo
 az account get-access-token --resource https://dynamicsessions.io 
 ```
 
-
+### POST request to execute code in a session
 Following is a sample request to execute code in a session. 
 ```
 POST https://<REGION>.dynamicsessions.io/subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP>/sessionPools/<SESSION_POOL_NAME>/code/execute?api-version=2024-02-02-preview&identifier=<SESSION_ID>
@@ -259,11 +259,11 @@ Authorization: Bearer <token>
 }
 ```
 
-Use python script dynamicsessions.py to test the dynamic sessions feature. 
+### Python script to test dynamic sessions  
 
+Use python script dynamicsessions.py to test the dynamic sessions feature. You don't need to change python code but need to set the AUTHORIZATION_TOKEN environment variable. Use this command to set the AUTHORIZATION_TOKEN environment variable.
 ```
-az account get-access-token --resource https://dynamicsessions.io 
-export AUTHORIZATION_TOKEN="e..."
+export AUTHORIZATION_TOKEN=$(az account get-access-token --resource https://dynamicsessions.io --query accessToken --output tsv)
 ```
 
 Run the python script.   This python basically sends a request to the dynamic sessions endpoint to execute a simple python code.
