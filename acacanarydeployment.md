@@ -9,8 +9,12 @@ Azure Container Apps provides a powerful mechanism for managing application chan
 
 1. **Create Initial Deployment, label new revision and set traffic weight for the label to 100%**
 
+   
    srinmantest.azurecr.io/bookstoreapi:v1 and srinmantest.azurecr.io/bookstoreapi:v2 are the images for the web application. Please change this to your image.  
    First, deploy your initial version of the web application to Azure Container Apps.
+
+   IMPORTANT: revision-mode must be set to multiple. This allows you to create multiple revisions of the same application.  
+
 
    ``` 
    uami_id=$(az identity show --resource-group academorg --name acaacrpulluami --query id --output tsv)
@@ -18,9 +22,10 @@ Azure Container Apps provides a powerful mechanism for managing application chan
    Assign AcrPull role for this identity to the ACR where the image is stored.
    ```bash
 
-   az containerapp create --name acabookstoreapi --resource-group academorg --environment academoenvw2con --workload-profile-name "Consumption" --image srinmantest.azurecr.io/bookstoreapi:v1 --target-port 5000 --ingress external --revisions-mode multiple --revision-suffix v1 --query properties.configuration.ingress.fqdn --registry-identity $uami_id --registry-server srinmantest.azurecr.io --min-replicas 1 --max-replicas 3    
+   az containerapp create --name acabookstoreapi --resource-group academorg --environment acaenv1 --workload-profile-name "Consumption" --image srinmantest.azurecr.io/bookstoreapi:v1 --target-port 5000 --ingress external --revisions-mode multiple --revision-suffix v1 --query properties.configuration.ingress.fqdn --registry-identity $uami_id --registry-server srinmantest.azurecr.io --min-replicas 1 --max-replicas 3    
 
    az containerapp revision label add --label stable --name acabookstoreapi --resource-group academorg --revision acabookstoreapi--v1 
+   az containerapp revision list --name acabookstoreapi --resource-group academorg  -o table
 
    az containerapp ingress traffic set --name acabookstoreapi --resource-group academorg --label-weight stable=100
    az containerapp revision list --name acabookstoreapi --resource-group academorg -o table
@@ -40,8 +45,10 @@ Azure Container Apps provides a powerful mechanism for managing application chan
 
    List the revisions to get the names of the current and new revisions.
 
+
+   az containerapp revision list --name my-web-app --resource-group my-resource-group --query "[].{name:name, active:active}" -o table   
+
    ```bash
-   az containerapp revision list --name my-web-app --resource-group my-resource-group --query "[].{name:name, active:active}" -o table
    az containerapp revision list --name acabookstoreapi --resource-group academorg 
    az containerapp revision list --name acabookstoreapi --resource-group academorg -o table
    ```
@@ -49,14 +56,22 @@ Azure Container Apps provides a powerful mechanism for managing application chan
    Review the traffic split between the stable and canary revisions.
 
    Open browser and navigate to the URL of the web app. You should see the response from the stable revision.   url/authors
+   
+   ```bash
+   az containerapp revision list --name acabookstoreapi --resource-group academorg --query "[].properties.fqdn" -o tsv
+   ```
+   You can see fqdn for both the revisions.   Portal should also display label URL.  At this time, you can test the canary revision by accessing it directly using its label URL. 
+
+   When you are ready to start the canary deployment, you can set the traffic weight for the canary revision to a small percentage (e.g., 10%) and the stable revision to 90%. This allows you to gradually roll out the new version while still serving most of your users with the stable version.  Follow the steps below to set the traffic weight.
 
 
 4. **Configure Traffic Splitting**
 
    Split the traffic between the stable and canary revisions. For example, route 90% of the traffic to the stable version and 10% to the canary version.
 
-   ```bash
    az containerapp ingress traffic set --name my-web-app --resource-group my-resource-group --traffic-weight stable=90 canary=10
+  
+   ```bash
    az containerapp ingress traffic set -n acabookstoreapi -g academorg --label-weight stable=90 canary=10
    ```
 

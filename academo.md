@@ -152,7 +152,7 @@ for added protection, you can use the following command to restrict access to th
 
 ```
 curl ifconfig.me   
-az containerapp ingress access-restriction set --name aca1bookstoreapi --resource-group academorg --rule-name allowSpecificIP --ip-address 135.134.199.24 --action Allow
+az containerapp ingress access-restriction set --name aca1bookstoreapi --resource-group academorg --rule-name allowSpecificIP --ip-address 1335.1324.1199.124 --action Allow
 ```
 
 **ACA's distinct feature : ACA provides built-in IP address restriction capabilities to control access to containerized applications. This feature allows you to restrict access to specific IP addresses or ranges, providing an additional layer of security for your applications. In AKS or K8S, you would need to configure network policies or NSG to achieve similar functionality.**
